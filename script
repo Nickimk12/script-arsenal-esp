@@ -1,0 +1,58 @@
+local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/7yhx/kwargs_Ui_Library/main/source.lua"))()
+
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+
+local UI = Lib:Create{
+   Theme = "Dark", -- or any other theme
+   Size = UDim2.new(0, 555, 0, 400) -- default
+}
+
+local Main = UI:Tab{
+   Name = "Inicio"
+}
+
+local Divider = Main:Divider{
+   Name = "Inicio shit"
+}
+
+local QuitDivider = Main:Divider{
+   Name = "Sair"
+}
+
+local function createESP(player)
+    local highlight = Instance.new("Highlight")
+    highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Cor da ESP, vermelho
+    highlight.FillTransparency = 0.5
+    highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+    highlight.Parent = player.Character
+end
+
+local function removeESP(player)
+    if player.Character then
+        local highlight = player.Character:FindFirstChildOfClass("Highlight")
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+end
+
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(function()
+        wait(1) -- Espera a personagem carregar
+        createESP(player)
+    end)
+end
+
+for _, player in pairs(players:GetPlayers()) do
+    if player ~= localPlayer then
+        onPlayerAdded(player)
+        player.CharacterAdded:Connect(function()
+            createESP(player)
+        end)
+    end
+end
+
+players.PlayerAdded:Connect(onPlayerAdded)
+players.PlayerRemoving:Connect(removeESP)
